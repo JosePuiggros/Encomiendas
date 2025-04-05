@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import datetime
 import models
-from database import engine, SessionLocal
+from database import engine, SessionLocal, Base
+from routers import auth
 
 models.Base.metadata.create_all(bind=engine)
 
