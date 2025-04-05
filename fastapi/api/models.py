@@ -1,18 +1,11 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from database import Base
-
-
-class Package(Base):
-    __tablename__ = "packages"
-
-    id = Column(Integer, primary_key=True, index=True)
-    depto = Column(Integer, index=True)
-    added_at = Column(DateTime, nullable=False)
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
+from .database import Base
+from datetime import datetime, timedelta, timezone
 
 class User(Base):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    mail = Column(String, index=True)
-    depto = Column(Integer, ForeignKey("packages.depto"))
+    username = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
