@@ -8,6 +8,7 @@ class Package(Base):
     id = Column(Integer, primary_key=True, index=True)
     depto = Column(Integer, index=True)
     added_at = Column(DateTime, nullable=False)
+    withdrawn = Column(bool, default=False)
 
 class User(Base):
     __tablename__ = "users"
