@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import api from "../api";
 
 const AddPackage = () => {
   const [formData, setFormData] = useState({
@@ -14,16 +15,15 @@ const AddPackage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:8000/add_package/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
 
-      if (response.ok) {
+    const payload = {
+      depto: parseInt(formData.depto),
+    };
+
+    try {
+      const response = await api.post("/add_package/", payload);
+
+      if (response.status === 200) {
         alert("Package added successfully!");
         setFormData({ depto: "" });
       } else {
@@ -41,9 +41,8 @@ const AddPackage = () => {
         <label htmlFor="name">depto:</label>
         <input
           type="number"
-          id="2"
-          depto="depto"
-          value={formData.name}
+          name="depto"
+          value={formData.depto}
           onChange={handleChange}
           required
         />

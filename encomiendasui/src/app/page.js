@@ -13,35 +13,14 @@ const App = () => {
         height: "100vh",
       }}
     >
-      <button
+      <h1
         style={{
-          backgroundColor: "blue",
-          color: "white",
-          padding: "10px 20px",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontSize: "16px",
+          fontSize: "24px",
+          textAlign: "center",
         }}
-        onClick={() => (window.location.href = "/para_retirar")}
       >
-        Ver paquetes por retirar
-      </button>
-      <button
-        style={{
-          backgroundColor: "green",
-          color: "white",
-          padding: "10px 20px",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontSize: "16px",
-          marginLeft: "10px",
-        }}
-        onClick={() => (window.location.href = "/add_package")}
-      >
-        Agregar un paquete
-      </button>
+        Bienvenido a la app de Encomiendas
+      </h1>
     </div>
   );
 };

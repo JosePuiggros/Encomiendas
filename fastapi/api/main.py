@@ -31,8 +31,10 @@ def get_db():
         db.close()
 
 @app.post("/add_package/")
-def add_package(depto: int, db: Session = Depends(get_db)):
-    new_package = models.Package(depto=depto, added_at=datetime.now())
+async def add_package(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    depto = body.get("depto")
+    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False)
     db.add(new_package)
     db.commit()
     db.refresh(new_package)
