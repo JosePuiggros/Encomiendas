@@ -5,6 +5,7 @@ from datetime import datetime
 from .database import engine, SessionLocal, Base
 from .routers import auth
 from api import models
+from .deps import user_dependency, db_dependency
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -30,8 +31,11 @@ def get_db():
     finally:
         db.close()
 
+app.include_router(auth.router)
+
+
 @app.post("/add_package/")
-async def add_package(request: Request, db: Session = Depends(get_db)):
+async def add_package(request: Request, db: db_dependency, user: user_dependency):
     body = await request.json()
     depto = body.get("depto")
     new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False)
@@ -41,7 +45,7 @@ async def add_package(request: Request, db: Session = Depends(get_db)):
     return {"message": "Package added successfully", "package": {"id": new_package.id, "depto": new_package.depto, "added_at": new_package.added_at, "withdrawn": new_package.withdrawn}}
 
 @app.delete("/delete_package/{package_id}/")
-def delete_package(package_id: int, db: Session = Depends(get_db)):
+def delete_package(package_id: int, db: db_dependency, user: user_dependency):
     package = db.query(models.Package).filter(models.Package.id == package_id).first()
     if not package:
         return {"error": "Package not found"}
@@ -50,18 +54,18 @@ def delete_package(package_id: int, db: Session = Depends(get_db)):
     return {"message": "Package deleted successfully"}
 
 @app.get("/get_package/{package_id}/")
-def get_package(package_id: int, db: Session = Depends(get_db)):
+def get_package(package_id: int, db: db_dependency, user: user_dependency):
     package = db.query(models.Package).filter(models.Package.id == package_id).first()
     if not package:
         return {"error": "Package not found"}
     return {"id": package.id, "depto": package.depto}
 
 @app.get("/get_packages/")
-def get_packages(db: Session = Depends(get_db)):
+def get_packages(db: db_dependency, user: user_dependency):
     return db.query(models.Package).all()
 
 @app.put("/update_package/{package_id}/")
-async def update_package(package_id: int, request: Request, db: Session = Depends(get_db)):
+async def update_package(package_id: int, request: Request, db: db_dependency, user: user_dependency):
     body = await request.json()
     package = db.query(models.Package).filter(models.Package.id == package_id).first()
     if not package:
@@ -74,16 +78,25 @@ async def update_package(package_id: int, request: Request, db: Session = Depend
     db.refresh(package)
     return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn}}
 
+# @app.post("/add_user/")
+# def add_user(username: str, mail: str, depto: int, db: db_dependency, user: user_dependency):
+#     new_user = models.User(username=username, mail=mail, depto=depto)
+#     db.add(new_user)
+#     db.commit()
+#     db.refresh(new_user)
+#     return {"message": "Package added successfully", "package": {"id": new_user.id, "nombre": new_user.username,"mail": new_user.mail, "depto": new_user.depto}}
+
 @app.post("/add_user/")
-def add_user(name: str, mail: str, depto: int, db: Session = Depends(get_db)):
-    new_user = models.User(name=name, mail=mail, depto=depto)
+def add_user(username: str, depto: int, db: db_dependency, user: user_dependency):
+    new_user = models.User(username=username, depto=depto)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return {"message": "Package added successfully", "package": {"id": new_user.id, "nombre": new_user.name,"mail": new_user.mail, "depto": new_user.depto}}
+    return {"message": "Package added successfully", "package": {"id": new_user.id, "nombre": new_user.username,"depto": new_user.depto}}
+
 
 @app.delete("/delete_user/{user_id}/")
-def delete_user(user_id: int, db: Session = Depends(get_db)):
+def delete_user(user_id: int, db: db_dependency, user: user_dependency):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         return {"error": "Package not found"}
@@ -92,8 +105,8 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     return {"message": "Package deleted successfully"}
 
 @app.get("/get_user/{user_id}/")
-def get_user(user_id: int, db: Session = Depends(get_db)):
+def get_user(user_id: int, db: db_dependency, user: user_dependency):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
         return {"error": "User not found"}
-    return {"id": user.id, "name": user.name, "mail": user.mail, "depto": user.depto}
+    return {"id": user.id, "username": user.username, "email": user.email, "depto": user.depto}
