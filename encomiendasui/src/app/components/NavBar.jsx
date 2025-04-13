@@ -77,6 +77,21 @@ const NavBar = () => {
         >
           Agregar un paquete
         </a>
+        <a
+          href="/historial"
+          style={{
+            backgroundColor: "purple",
+            color: "white",
+            padding: "10px 20px",
+            textDecoration: "none",
+            borderRadius: "5px",
+            fontSize: "16px",
+            display: "inline-block",
+            textAlign: "center",
+          }}
+        >
+          Historial
+        </a>
       </div>
     </div>
   );
