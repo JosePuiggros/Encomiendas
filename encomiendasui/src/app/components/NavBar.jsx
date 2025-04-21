@@ -1,6 +1,15 @@
+"use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const NavBar = () => {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Borra el token del localStorage
+    router.push("/login"); // Redirige al usuario a la página de inicio de sesión
+  };
+
   return (
     <div
       style={{
@@ -77,6 +86,35 @@ const NavBar = () => {
         >
           Agregar un paquete
         </a>
+        <a
+          href="/historial"
+          style={{
+            backgroundColor: "purple",
+            color: "white",
+            padding: "10px 20px",
+            textDecoration: "none",
+            borderRadius: "5px",
+            fontSize: "16px",
+            display: "inline-block",
+            textAlign: "center",
+          }}
+        >
+          Historial
+        </a>
+        <button
+          onClick={handleLogout}
+          style={{
+            backgroundColor: "red",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
