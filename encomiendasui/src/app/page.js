@@ -1,9 +1,19 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use, useContext } from "react";
 import api from "./api";
 import "./globals.css";
+import AuthContext from "./context/AuthContext";
 
 const App = () => {
+
+  const {user} = useContext(AuthContext);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    console.log("Token in localStorage:", token); // Verifica si el token está disponible
+  }, []);
+
   return (
     <div
       style={{
