@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const NavBar = () => {
   const router = useRouter();
@@ -10,113 +11,102 @@ const NavBar = () => {
     router.push("/login"); // Redirige al usuario a la página de inicio de sesión
   };
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "10px 0",
-        position: "fixed",
-        top: 0,
-        width: "100%",
-        backgroundColor: "#f8f9fa",
-        boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
-        zIndex: 1000,
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          left: "10px",
-          top: "10px",
-        }}
-      >
-        <a
-          href="/"
-          style={{
-            backgroundColor: "gray",
-            color: "white",
-            padding: "10px 20px",
-            textDecoration: "none",
-            borderRadius: "5px",
-            fontSize: "16px",
-            display: "inline-block",
-            textAlign: "center",
-          }}
-        >
-          Inicio
-        </a>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "10px",
-        }}
-      >
-        <a
-          href="/para_retirar"
-          style={{
-            backgroundColor: "blue",
-            color: "white",
-            padding: "10px 20px",
-            textDecoration: "none",
-            borderRadius: "5px",
-            fontSize: "16px",
-            display: "inline-block",
-            textAlign: "center",
-          }}
-        >
-          Ver paquetes por retirar
-        </a>
-        <a
-          href="/add_package"
-          style={{
-            backgroundColor: "green",
-            color: "white",
-            padding: "10px 20px",
-            textDecoration: "none",
-            borderRadius: "5px",
-            fontSize: "16px",
-            display: "inline-block",
-            textAlign: "center",
-          }}
-        >
-          Agregar un paquete
-        </a>
-        <a
-          href="/historial"
-          style={{
-            backgroundColor: "purple",
-            color: "white",
-            padding: "10px 20px",
-            textDecoration: "none",
-            borderRadius: "5px",
-            fontSize: "16px",
-            display: "inline-block",
-            textAlign: "center",
-          }}
-        >
-          Historial
-        </a>
+    <nav className="fixed top-0 w-full shadow-md z-50 p-3 bg-gray-900">
+      <div className="flex justify-between items-center">
+        <div>
+          <a
+            href="/"
+            className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded text-base no-underline transition-colors text-green-500"
+          >
+            Inicio
+          </a>
+        </div>
         <button
-          onClick={handleLogout}
-          style={{
-            backgroundColor: "red",
-            color: "white",
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
+          className="md:hidden focus:outline-none text-green-500"
+          onClick={toggleMenu}
         >
-          Logout
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d={
+                isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"
+              }
+            />
+          </svg>
         </button>
+
+        <div className="hidden md:flex flex-wrap justify-center gap-2">
+          <a
+            href="/para_retirar"
+            className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
+          >
+            Ver paquetes por retirar
+          </a>
+          <a
+            href="/add_package"
+            className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
+          >
+            Agregar un paquete
+          </a>
+          <a
+            href="/historial"
+            className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
+          >
+            Historial
+          </a>
+          <button
+            onClick={handleLogout}
+            className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-base border-0 cursor-pointer transition-colors text-green-500"
+          >
+            Logout
+          </button>
+        </div>
       </div>
-    </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden flex flex-col mt-4 gap-2">
+          <a
+            href="/para_retirar"
+            className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
+          >
+            Ver paquetes por retirar
+          </a>
+          <a
+            href="/add_package"
+            className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
+          >
+            Agregar un paquete
+          </a>
+          <a
+            href="/historial"
+            className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
+          >
+            Historial
+          </a>
+          <button
+            onClick={handleLogout}
+            className="bg-gray-700 hover:bg-gray-800 px -3 py-2 rounded text-sm border-0 cursor-pointer transition-colors text-left text-green-500"
+          >
+            Logout
+          </button>
+        </div>
+      )}
+    </nav>
   );
 };
 

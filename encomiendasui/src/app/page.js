@@ -7,8 +7,10 @@ import { useRouter } from "next/navigation";
 
 const App = () => {
 
+
   const {user} = useContext(AuthContext);
   const router = useRouter();
+
 
   useEffect(() => {
     try {

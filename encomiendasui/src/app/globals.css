@@ -1,4 +1,10 @@
 /* globals.css */
+@import "tailwindcss";
+
+a {
+  @apply text-green-500 no-underline hover:text-green-500;
+}
+
 body {
   display: flex;
   justify-content: center;
