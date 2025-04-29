@@ -32,47 +32,66 @@ const App = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
-        gap: "10px",
-      }}
-    >
-      <div>
-        <strong>ID</strong>
+    <div className="container mx-auto p-2 lg:p-4">
+      <div className="hidden lg:grid lg:grid-cols-5 gap-33 bg-gray-100 p-3 rounded-t-lg">
+        <div className="font-bold text-center">ID</div>
+        <div className="font-bold text-center">Department</div>
+        <div className="font-bold text-center">Added at</div>
+        <div className="font-bold text-center">Retirado</div>
+        <div className="font-bold text-center">Action</div>
       </div>
-      <div>
-        <strong>Department</strong>
-      </div>
-      <div>
-        <strong>Added at</strong>
-      </div>
-      <div>
-        <strong>Retirado</strong>
-      </div>
-      <div>
-        <strong>Action</strong>
-      </div>
+
       {packages.length > 0 ? (
-        packages
-          .filter((pkg) => !pkg.withdrawn)
-          .map((pkg) => (
-            <React.Fragment key={pkg.id}>
-              <div>{pkg.id}</div>
-              <div>{pkg.depto}</div>
-              <div>{pkg.added_at}</div>
-              <div>{pkg.withdrawn ? "Si" : "No"}</div>
-              <div>
-                <button onClick={() => handleWithdraw(pkg.id)}>Retirado</button>
+        <div className="divide-y divide-gray-200">
+          {packages
+            .filter((pkg) => !pkg.withdrawn)
+            .map((pkg) => (
+              <div
+                key={pkg.id}
+                className="flex flex-col lg:grid lg:grid-cols-5 gap-2 lg:gap-4 p-3 hover:bg-gray-50"
+              >
+                <div className="lg:hidden flex justify-between">
+                  <span className="font-bold">ID:</span> <span>{pkg.id}</span>
+                </div>
+                <div className="lg:hidden flex justify-between">
+                  <span className="font-bold">Department:</span>{" "}
+                  <span>{pkg.depto}</span>
+                </div>
+                <div className="lg:hidden flex justify-between">
+                  <span className="font-bold">Added at:</span>{" "}
+                  <span>{pkg.added_at}</span>
+                </div>
+                <div className="lg:hidden flex justify-between">
+                  <span className="font-bold">Retirado:</span>{" "}
+                  <span>{pkg.withdrawn ? "Si" : "No"}</span>
+                </div>
+
+                <div className="hidden lg:block">{pkg.id}</div>
+                <div className="hidden lg:block">{pkg.depto}</div>
+                <div className="hidden lg:block">{pkg.added_at}</div>
+                <div className="hidden lg:block">
+                  {pkg.withdrawn ? "Si" : "No"}
+                </div>
+
+                <div className="mt-2 lg:mt-0">
+                  <button
+                    onClick={() => handleWithdraw(pkg.id)}
+                    className="w-full lg:w-auto bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    Retirado
+                  </button>
+                </div>
               </div>
-            </React.Fragment>
-          ))
+            ))}
+        </div>
       ) : (
-        <>
+        <div className="flex flex-col lg:grid lg:grid-cols-5 gap-2 lg:gap-4 p-3 text-gray-500">
           <div>Loading...</div>
-          <div>Loading...</div>
-        </>
+          <div className="hidden lg:block">Loading...</div>
+          <div className="hidden lg:block">Loading...</div>
+          <div className="hidden lg:block">Loading...</div>
+          <div className="hidden lg:block">Loading...</div>
+        </div>
       )}
     </div>
   );

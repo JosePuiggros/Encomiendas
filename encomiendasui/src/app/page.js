@@ -5,8 +5,7 @@ import "./globals.css";
 import AuthContext from "./context/AuthContext";
 
 const App = () => {
-
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
