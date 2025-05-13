@@ -52,7 +52,7 @@ const Login = () => {
                         onClick={() => setShowPassword(!showPassword)} // Cambia el estado
                         className="absolute right-2 top-2 text-gray-500"
                     >
-                        {showPassword ? "🙈" : "👁️"} {/* Icono de ojo */}
+                        {showPassword ? "ocultar" : "mostrar"} {/* Icono de ojo */}
                     </button>
                 </div>
                 <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Login</button>

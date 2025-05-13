@@ -10,6 +10,15 @@ class Package(Base):
     added_at = Column(DateTime, nullable=False)
     withdrawn = Column(Boolean, default=False)
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    depto = Column(Integer, ForeignKey("packages.depto"))
+
+    
 # class User(Base): 
 #     __tablename__ = "users"
 
@@ -19,10 +28,3 @@ class Package(Base):
 #     depto = Column(Integer, ForeignKey("packages.depto"))
 
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    depto = Column(Integer, ForeignKey("packages.depto"))
