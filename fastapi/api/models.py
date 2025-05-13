@@ -9,6 +9,8 @@ class Package(Base):
     depto = Column(Integer, index=True)
     added_at = Column(DateTime, nullable=False)
     withdrawn = Column(Boolean, default=False)
+    urgente = Column(Boolean, default=False)
+
 
 class User(Base):
     __tablename__ = "users"

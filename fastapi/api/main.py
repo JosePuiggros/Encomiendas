@@ -34,22 +34,15 @@ def get_db():
 app.include_router(auth.router)
 
 
-# @app.post("/add_package/")
-# async def add_package(request: Request, db: db_dependency, user: user_dependency):
-#     body = await request.json()
-#     depto = body.get("depto")
-#     new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False)
-#     db.add(new_package)
-#     db.commit()
-#     db.refresh(new_package)
-#     return {"message": "Package added successfully", "package": {"id": new_package.id, "depto": new_package.depto, "added_at": new_package.added_at, "withdrawn": new_package.withdrawn}}
+
 @app.post("/add_package/")
 async def add_package(request: Request, db: db_dependency, user: user_dependency):
     body = await request.json()
     depto = body.get("depto")
+    urgente = body.get("urgente", False)
 
     # Crear el paquete
-    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False)
+    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False, urgente=urgente)
     db.add(new_package)
     db.commit()
     db.refresh(new_package)
@@ -128,15 +121,6 @@ async def update_package(package_id: int, request: Request, db: db_dependency, u
     db.commit()
     db.refresh(package)
     return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn}}
-
-# @app.post("/add_user/")
-# def add_user(username: str, depto: int, db: db_dependency, user: user_dependency):
-#     new_user = models.User(username=username, depto=depto)
-#     db.add(new_user)
-#     db.commit()
-#     db.refresh(new_user)
-#     return {"message": "Package added successfully", "package": {"id": new_user.id, "nombre": new_user.username,"depto": new_user.depto}}
-
 
 @app.delete("/delete_user/{user_id}/")
 def delete_user(user_id: int, db: db_dependency, user: user_dependency):
