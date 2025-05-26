@@ -78,7 +78,7 @@ const AddPackage = () => {
               htmlFor="urgente"
               className="ml-2 block text-sm font-medium text-gray-700"
             >
-              Urgent Package
+              Urgente
             </label>
           </div>
           <button

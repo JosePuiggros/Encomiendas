@@ -118,9 +118,11 @@ async def update_package(package_id: int, request: Request, db: db_dependency, u
         package.depto = body["depto"]
     if "withdrawn" in body:
         package.withdrawn = body["withdrawn"]
+    if "urgente" in body:
+        package.urgente = body["urgente"]
     db.commit()
     db.refresh(package)
-    return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn}}
+    return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn, "urgente": package.urgente}}
 
 @app.delete("/delete_user/{user_id}/")
 def delete_user(user_id: int, db: db_dependency, user: user_dependency):

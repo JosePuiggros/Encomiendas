@@ -20,10 +20,13 @@ const App = () => {
 
   const handleWithdraw = async (id) => {
     try {
-      await api.put(`/update_package/${id}/`, { withdrawn: true });
+      await api.put(`/update_package/${id}/`, {
+        withdrawn: true,
+        urgent: false,
+      });
       setPackages((prevPackages) =>
         prevPackages.map((pkg) =>
-          pkg.id === id ? { ...pkg, withdrawn: true } : pkg
+          pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
         )
       );
     } catch (error) {

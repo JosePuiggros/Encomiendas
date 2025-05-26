@@ -22,11 +22,12 @@ const Historial = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Historial de Paquetes</h1>
 
-      <div className="hidden md:grid md:grid-cols-4 gap-33 mb-4 font-bold bg-gray-100 p-3 rounded-lg">
+      <div className="hidden md:grid md:grid-cols-5 gap-33 mb-4 font-bold bg-gray-100 p-3 rounded-lg">
         <div>ID</div>
         <div>Department</div>
         <div>Added at</div>
         <div>Action</div>
+        <div>Urgente</div>
       </div>
 
       {packages.length > 0 ? (
@@ -34,7 +35,7 @@ const Historial = () => {
           {packages.map((pkg) => (
             <div
               key={pkg.id}
-              className="grid grid-cols-1 md:grid-cols-4 gap-2 border rounded-lg p-3 hover:bg-gray-50"
+              className="grid grid-cols-1 md:grid-cols-5 gap-2 border rounded-lg p-3 hover:bg-gray-50"
             >
               <div className="flex md:block">
                 <span className="font-bold md:hidden mr-2">ID:</span>
@@ -54,6 +55,15 @@ const Historial = () => {
                   <span className="text-green-600 font-medium">Retirado</span>
                 ) : (
                   <span className="text-red-600 font-medium">Pendiente</span>
+                )}
+              </div>
+
+              <div className="flex md:block">
+                <span className="font-bold md:hidden mr-2">Status:</span>
+                {pkg.urgente ? (
+                  <span className="text-black **:font-medium">si</span>
+                ) : (
+                  <span className="text-black font-medium">no</span>
                 )}
               </div>
             </div>
