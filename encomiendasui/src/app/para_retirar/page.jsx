@@ -20,10 +20,13 @@ const App = () => {
 
   const handleWithdraw = async (id) => {
     try {
-      await api.put(`/update_package/${id}/`, { withdrawn: true });
+      await api.put(`/update_package/${id}/`, {
+        withdrawn: true,
+        urgent: false,
+      });
       setPackages((prevPackages) =>
         prevPackages.map((pkg) =>
-          pkg.id === id ? { ...pkg, withdrawn: true } : pkg
+          pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
         )
       );
     } catch (error) {
@@ -33,11 +36,12 @@ const App = () => {
 
   return (
     <div className="container mx-auto p-2 lg:p-4">
-      <div className="hidden lg:grid lg:grid-cols-5 gap-33 bg-gray-100 p-3 rounded-t-lg">
+      <div className="hidden lg:grid lg:grid-cols-6 gap-33 bg-gray-100 p-3 rounded-t-lg">
         <div className="font-bold text-center">ID</div>
         <div className="font-bold text-center">Department</div>
         <div className="font-bold text-center">Added at</div>
         <div className="font-bold text-center">Retirado</div>
+        <div className="font-bold text-center">Urgente</div>
         <div className="font-bold text-center">Action</div>
       </div>
 
@@ -48,7 +52,7 @@ const App = () => {
             .map((pkg) => (
               <div
                 key={pkg.id}
-                className="flex flex-col lg:grid lg:grid-cols-5 gap-2 lg:gap-4 p-3 hover:bg-gray-50"
+                className="flex flex-col lg:grid lg:grid-cols-6 gap-2 lg:gap-4 p-3 hover:bg-gray-50"
               >
                 <div className="lg:hidden flex justify-between">
                   <span className="font-bold">ID:</span> <span>{pkg.id}</span>
@@ -65,12 +69,19 @@ const App = () => {
                   <span className="font-bold">Retirado:</span>{" "}
                   <span>{pkg.withdrawn ? "Si" : "No"}</span>
                 </div>
+                <div className="lg:hidden flex justify-between">
+                  <span className="font-bold">Urgente:</span>{" "}
+                  <span>{pkg.urgente ? "Si" : "No"}</span>
+                </div>
 
                 <div className="hidden lg:block">{pkg.id}</div>
                 <div className="hidden lg:block">{pkg.depto}</div>
                 <div className="hidden lg:block">{pkg.added_at}</div>
                 <div className="hidden lg:block">
                   {pkg.withdrawn ? "Si" : "No"}
+                </div>
+                <div className="hidden lg:block">
+                  {pkg.urgente ? "Si" : "No"}
                 </div>
 
                 <div className="mt-2 lg:mt-0">
@@ -85,8 +96,9 @@ const App = () => {
             ))}
         </div>
       ) : (
-        <div className="flex flex-col lg:grid lg:grid-cols-5 gap-2 lg:gap-4 p-3 text-gray-500">
+        <div className="flex flex-col lg:grid lg:grid-cols-6 gap-2 lg:gap-4 p-3 text-gray-500">
           <div>Loading...</div>
+          <div className="hidden lg:block">Loading...</div>
           <div className="hidden lg:block">Loading...</div>
           <div className="hidden lg:block">Loading...</div>
           <div className="hidden lg:block">Loading...</div>
