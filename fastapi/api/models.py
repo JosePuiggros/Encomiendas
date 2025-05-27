@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from .database import Base
+from datetime import datetime
 
 
 class Package(Base):
@@ -10,6 +11,8 @@ class Package(Base):
     added_at = Column(DateTime, nullable=False)
     withdrawn = Column(Boolean, default=False)
     urgente = Column(Boolean, default=False)
+    last_notified = Column(DateTime, nullable=True) 
+
 
 
 class User(Base):

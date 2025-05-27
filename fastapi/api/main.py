@@ -1,15 +1,17 @@
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timedelta
 from .database import engine, SessionLocal, Base
 from .routers import auth
 from api import models
 from .deps import user_dependency, db_dependency
+from apscheduler.schedulers.background import BackgroundScheduler
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+scheduler = BackgroundScheduler()
 
 origins = [
     "http://localhost:3000",
@@ -71,7 +73,7 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
     server.set_debuglevel(1)
     server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
     server.login(login, password)
-
+    
     server.sendmail(
         sender_email, receiver_email, message.as_string()
     )
@@ -185,3 +187,44 @@ def send_email(user_mail: str, db: db_dependency, user: user_dependency):
   
   
     return {"msg":"send mail"}
+
+def send_pending_notifications():
+    db = SessionLocal()
+    # Obtener paquetes pendientes
+    pending_packages = db.query(models.Package).filter((models.Package.withdrawn == False) & (models.Package.urgente == True)).all()
+    for package in pending_packages:
+        depto = package.depto
+        # Buscar el correo del usuario asociado al departamento
+        user = db.query(models.User).filter(models.User.depto == depto).first()
+        if not user:
+            return {"message": "Package added, but no user found for the department"}
+        # Configurar y enviar el correo
+        receiver_email = user.email
+        message["To"] = receiver_email
+
+        html = f"""\
+            <html>
+            <body>
+                <p>Hola {user.username},<br>
+                Te informamos que ha llegado un paquete Urgente para el departamento {depto}.</p>
+            </body>
+            </html>
+            """
+        part = MIMEText(html, "html")
+        message.attach(part)
+
+        server = smtplib.SMTP(smtp_server, port)
+        server.set_debuglevel(1)
+        server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
+        server.login(login, password)
+        
+        server.sendmail(
+            sender_email, receiver_email, message.as_string()
+        )
+        server.quit()
+    db.close()
+
+
+# Programar la tarea cada 5 minutos
+scheduler.add_job(send_pending_notifications, 'interval', minutes=1)
+scheduler.start()
