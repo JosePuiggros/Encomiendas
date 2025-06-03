@@ -1,15 +1,17 @@
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, timedelta
 from .database import engine, SessionLocal, Base
 from .routers import auth
 from api import models
 from .deps import user_dependency, db_dependency
+from apscheduler.schedulers.background import BackgroundScheduler
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+scheduler = BackgroundScheduler()
 
 origins = [
     "http://localhost:3000",
@@ -34,22 +36,15 @@ def get_db():
 app.include_router(auth.router)
 
 
-# @app.post("/add_package/")
-# async def add_package(request: Request, db: db_dependency, user: user_dependency):
-#     body = await request.json()
-#     depto = body.get("depto")
-#     new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False)
-#     db.add(new_package)
-#     db.commit()
-#     db.refresh(new_package)
-#     return {"message": "Package added successfully", "package": {"id": new_package.id, "depto": new_package.depto, "added_at": new_package.added_at, "withdrawn": new_package.withdrawn}}
+
 @app.post("/add_package/")
 async def add_package(request: Request, db: db_dependency, user: user_dependency):
     body = await request.json()
     depto = body.get("depto")
+    urgente = body.get("urgente", False)
 
     # Crear el paquete
-    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False)
+    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False, urgente=urgente)
     db.add(new_package)
     db.commit()
     db.refresh(new_package)
@@ -78,7 +73,7 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
     server.set_debuglevel(1)
     server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
     server.login(login, password)
-
+    
     server.sendmail(
         sender_email, receiver_email, message.as_string()
     )
@@ -125,18 +120,11 @@ async def update_package(package_id: int, request: Request, db: db_dependency, u
         package.depto = body["depto"]
     if "withdrawn" in body:
         package.withdrawn = body["withdrawn"]
+    if "urgente" in body:
+        package.urgente = body["urgente"]
     db.commit()
     db.refresh(package)
-    return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn}}
-
-# @app.post("/add_user/")
-# def add_user(username: str, depto: int, db: db_dependency, user: user_dependency):
-#     new_user = models.User(username=username, depto=depto)
-#     db.add(new_user)
-#     db.commit()
-#     db.refresh(new_user)
-#     return {"message": "Package added successfully", "package": {"id": new_user.id, "nombre": new_user.username,"depto": new_user.depto}}
-
+    return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn, "urgente": package.urgente}}
 
 @app.delete("/delete_user/{user_id}/")
 def delete_user(user_id: int, db: db_dependency, user: user_dependency):
@@ -199,3 +187,44 @@ def send_email(user_mail: str, db: db_dependency, user: user_dependency):
   
   
     return {"msg":"send mail"}
+
+def send_pending_notifications():
+    db = SessionLocal()
+    # Obtener paquetes pendientes
+    pending_packages = db.query(models.Package).filter((models.Package.withdrawn == False) & (models.Package.urgente == True)).all()
+    for package in pending_packages:
+        depto = package.depto
+        # Buscar el correo del usuario asociado al departamento
+        user = db.query(models.User).filter(models.User.depto == depto).first()
+        if not user:
+            return {"message": "Package added, but no user found for the department"}
+        # Configurar y enviar el correo
+        receiver_email = user.email
+        message["To"] = receiver_email
+
+        html = f"""\
+            <html>
+            <body>
+                <p>Hola {user.username},<br>
+                Te informamos que ha llegado un paquete Urgente para el departamento {depto}.</p>
+            </body>
+            </html>
+            """
+        part = MIMEText(html, "html")
+        message.attach(part)
+
+        server = smtplib.SMTP(smtp_server, port)
+        server.set_debuglevel(1)
+        server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
+        server.login(login, password)
+        
+        server.sendmail(
+            sender_email, receiver_email, message.as_string()
+        )
+        server.quit()
+    db.close()
+
+
+# Programar la tarea cada 5 minutos
+scheduler.add_job(send_pending_notifications, 'interval', minutes=1)
+scheduler.start()

@@ -6,6 +6,7 @@ import api from "../api";
 const AddPackage = () => {
   const [formData, setFormData] = useState({
     depto: "",
+    urgente: false,
   });
 
   const handleChange = (e) => {
@@ -18,6 +19,7 @@ const AddPackage = () => {
 
     const payload = {
       depto: parseInt(formData.depto),
+      urgente: formData.urgente,
     };
 
     try {
@@ -25,7 +27,7 @@ const AddPackage = () => {
 
       if (response.status === 200) {
         alert("Package added successfully!");
-        setFormData({ depto: "" });
+        setFormData({ depto: "", urgente: false });
       } else {
         alert("Failed to add package.");
       }
@@ -59,6 +61,25 @@ const AddPackage = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
               placeholder="Enter department number"
             />
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="urgente"
+              id="urgente"
+              checked={formData.urgente || false}
+              onChange={(e) => {
+                const isChecked = e.target.checked;
+                setFormData({ ...formData, urgente: isChecked });
+              }}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            />
+            <label
+              htmlFor="urgente"
+              className="ml-2 block text-sm font-medium text-gray-700"
+            >
+              Urgente
+            </label>
           </div>
           <button
             type="submit"

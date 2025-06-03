@@ -39,3 +39,57 @@ Thumbs.db
 *.bak
 *.orig
 *.rej
+
+# Coverage directories
+coverage/
+.nyc_output/
+.coverage/
+.lcov
+
+# Cache directories
+.cache/
+.npm/
+.eslintcache
+.stylelintcache
+.next/
+.nuxt/
+.vuepress/dist
+.serverless/
+.fusebox/
+
+# Testing
+/cypress/videos/
+/cypress/screenshots/
+/playwright-report/
+
+# Dependency locks (uncomment if needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Compiled binary addons
+build/Release
+
+# Local db files
+*.sqlite
+*.sqlite3
+*.db
+
+# Documentation generated
+/docs/generated/
+/jsdoc/
+
+# Additional IDE configs
+.classpath
+.project
+.settings/
+*.sublime-*
+nbproject/
+.netbeans
+
+# Misc
+.sass-cache/
+.parcel-cache/
+.grunt/
+.pnp.*
+.yarn/
