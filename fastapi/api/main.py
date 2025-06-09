@@ -7,6 +7,7 @@ from .routers import auth
 from api import models
 from .deps import user_dependency, db_dependency
 from apscheduler.schedulers.background import BackgroundScheduler
+from random import randint
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -44,7 +45,8 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
     urgente = body.get("urgente", False)
 
     # Crear el paquete
-    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False, urgente=urgente)
+    codigo = randint(0, 9999) 
+    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False, urgente=urgente, codigo=codigo)
     db.add(new_package)
     db.commit()
     db.refresh(new_package)
