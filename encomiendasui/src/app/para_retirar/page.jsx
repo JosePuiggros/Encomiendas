@@ -18,21 +18,52 @@ const App = () => {
     fetchPackage();
   }, []);
 
+  // const handleWithdraw = async (id) => {
+  //   try {
+  //     await api.put(`/update_package/${id}/`, {
+  //       withdrawn: true,
+  //       urgent: false,
+  //     });
+  //     setPackages((prevPackages) =>
+  //       prevPackages.map((pkg) =>
+  //         pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
+  //       )
+  //     );
+  //   } catch (error) {
+  //     console.error("Error updating package:", error);
+  //   }
+  // };
   const handleWithdraw = async (id) => {
-    try {
-      await api.put(`/update_package/${id}/`, {
-        withdrawn: true,
-        urgent: false,
-      });
-      setPackages((prevPackages) =>
-        prevPackages.map((pkg) =>
-          pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
-        )
-      );
-    } catch (error) {
-      console.error("Error updating package:", error);
+  const pkg = packages.find((p) => p.id === id);
+  if (!pkg) return;
+
+  let authorized = false;
+  while (!authorized) {
+    const inputCode = window.prompt("Ingrese el código de retiro del paquete:");
+    if (inputCode === null) return; // Cancelled
+
+    if (inputCode === String(pkg.code)) { // Assuming pkg.code holds the correct code
+      try {
+        await api.put(`/update_package/${id}/`, {
+          withdrawn: true,
+          urgent: false,
+        });
+        setPackages((prevPackages) =>
+          prevPackages.map((pkg) =>
+            pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
+          )
+        );
+        authorized = true;
+      } catch (error) {
+        console.error("Error updating package:", error);
+        alert("Error al actualizar el paquete.");
+        return;
+      }
+    } else {
+      alert("Código incorrecto. Intente nuevamente.");
     }
-  };
+  }
+};
 
   return (
     <div className="container mx-auto p-2 lg:p-4">
