@@ -58,16 +58,25 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
 
     # Configurar y enviar el correo
     receiver_email = user.email
-    message["To"] = receiver_email
 
+    message = MIMEMultipart("alternative")
+    if urgente:
+        message["Subject"] = "¡Paquete urgente esperando por ti!"
+    else:
+        message["Subject"] = "Hola, hay un paquete esperando por ti!!!"
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    
     html = f"""\
-        <html>
-        <body>
-            <p>Hola {user.username},<br>
-            Te informamos que ha llegado un paquete para el departamento {depto}.</p>
-        </body>
-        </html>
-        """
+    <html>
+    <body>
+        <p>Hola {user.username},<br>
+        Te informamos que ha llegado un paquete{' <b>Urgente</b>' if urgente else ''} para el departamento {depto}.<br>
+        <b>Código de retiro:</b> {new_package.codigo}
+        </p>
+    </body>
+    </html>
+    """
     part = MIMEText(html, "html")
     message.attach(part)
 
@@ -202,13 +211,19 @@ def send_pending_notifications():
             return {"message": "Package added, but no user found for the department"}
         # Configurar y enviar el correo
         receiver_email = user.email
+
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "¡Paquete urgente esperando por ti!"
+        message["From"] = sender_email
         message["To"] = receiver_email
 
         html = f"""\
             <html>
             <body>
                 <p>Hola {user.username},<br>
-                Te informamos que ha llegado un paquete Urgente para el departamento {depto}.</p>
+                Te informamos que ha llegado un paquete <b>Urgente</b> para el departamento {depto}.<br>
+                <b>Código de retiro:</b> {package.codigo}
+                </p>
             </body>
             </html>
             """

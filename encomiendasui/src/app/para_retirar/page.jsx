@@ -33,7 +33,7 @@ const App = () => {
   //     console.error("Error updating package:", error);
   //   }
   // };
-  const handleWithdraw = async (id) => {
+ const handleWithdraw = async (id) => {
   const pkg = packages.find((p) => p.id === id);
   if (!pkg) return;
 
@@ -42,7 +42,7 @@ const App = () => {
     const inputCode = window.prompt("Ingrese el código de retiro del paquete:");
     if (inputCode === null) return; // Cancelled
 
-    if (inputCode === String(pkg.code)) { // Assuming pkg.code holds the correct code
+    if (inputCode === String(pkg.codigo)) { // <-- Cambiado a pkg.codigo
       try {
         await api.put(`/update_package/${id}/`, {
           withdrawn: true,
