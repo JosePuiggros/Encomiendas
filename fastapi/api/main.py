@@ -7,6 +7,7 @@ from .routers import auth
 from api import models
 from .deps import user_dependency, db_dependency
 from apscheduler.schedulers.background import BackgroundScheduler
+from random import randint
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -44,7 +45,8 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
     urgente = body.get("urgente", False)
 
     # Crear el paquete
-    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False, urgente=urgente)
+    codigo = randint(0, 9999) 
+    new_package = models.Package(depto=depto, added_at=datetime.now(), withdrawn=False, urgente=urgente, codigo=codigo)
     db.add(new_package)
     db.commit()
     db.refresh(new_package)
@@ -56,38 +58,49 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
 
     # Configurar y enviar el correo
     receiver_email = user.email
-    message["To"] = receiver_email
-
-    html = f"""\
+    if urgente: 
+        message = MIMEMultipart("alternative")
+        if urgente:
+            message["Subject"] = "¡Paquete urgente esperando por ti!"
+        else:
+            message["Subject"] = "Hola, hay un paquete esperando por ti!!!"
+        message["From"] = sender_email
+        message["To"] = receiver_email
+        
+        html = f"""\
         <html>
         <body>
             <p>Hola {user.username},<br>
-            Te informamos que ha llegado un paquete para el departamento {depto}.</p>
+            Te informamos que ha llegado un paquete{' <b>Urgente</b>' if urgente else ''} para el departamento {depto}.<br>
+            <b>Código de retiro:</b> {new_package.codigo}
+            </p>
         </body>
         </html>
         """
-    part = MIMEText(html, "html")
-    message.attach(part)
+        part = MIMEText(html, "html")
+        message.attach(part)
 
-    server = smtplib.SMTP(smtp_server, port)
-    server.set_debuglevel(1)
-    server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
-    server.login(login, password)
+        server = smtplib.SMTP(smtp_server, port)
+        server.set_debuglevel(1)
+        server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
+        server.login(login, password)
+        
+        server.sendmail(
+            sender_email, receiver_email, message.as_string()
+        )
+        server.quit()
+
+        return {
+            "message": "Package added successfully and email sent",
+            "package": {
+                "id": new_package.id,
+                "depto": new_package.depto,
+                "added_at": new_package.added_at,
+                "withdrawn": new_package.withdrawn,
+            },
+        }
     
-    server.sendmail(
-        sender_email, receiver_email, message.as_string()
-    )
-    server.quit()
 
-    return {
-        "message": "Package added successfully and email sent",
-        "package": {
-            "id": new_package.id,
-            "depto": new_package.depto,
-            "added_at": new_package.added_at,
-            "withdrawn": new_package.withdrawn,
-        },
-    }
 
 
 @app.delete("/delete_package/{package_id}/")
@@ -200,13 +213,19 @@ def send_pending_notifications():
             return {"message": "Package added, but no user found for the department"}
         # Configurar y enviar el correo
         receiver_email = user.email
+
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "¡Paquete urgente esperando por ti!"
+        message["From"] = sender_email
         message["To"] = receiver_email
 
         html = f"""\
             <html>
             <body>
                 <p>Hola {user.username},<br>
-                Te informamos que ha llegado un paquete Urgente para el departamento {depto}.</p>
+                Te informamos que ha llegado un paquete <b>Urgente</b> para el departamento {depto}.<br>
+                <b>Código de retiro:</b> {package.codigo}
+                </p>
             </body>
             </html>
             """
