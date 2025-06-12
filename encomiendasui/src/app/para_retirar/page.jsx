@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, use } from "react";
 import api from "../api";
+import toast, { Toaster } from "react-hot-toast";
+
 
 const App = () => {
   const [packages, setPackages] = useState([]);
@@ -18,21 +20,6 @@ const App = () => {
     fetchPackage();
   }, []);
 
-  // const handleWithdraw = async (id) => {
-  //   try {
-  //     await api.put(`/update_package/${id}/`, {
-  //       withdrawn: true,
-  //       urgent: false,
-  //     });
-  //     setPackages((prevPackages) =>
-  //       prevPackages.map((pkg) =>
-  //         pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
-  //       )
-  //     );
-  //   } catch (error) {
-  //     console.error("Error updating package:", error);
-  //   }
-  // };
  const handleWithdraw = async (id) => {
   const pkg = packages.find((p) => p.id === id);
   if (!pkg) return;
@@ -40,11 +27,11 @@ const App = () => {
   let authorized = false;
   while (!authorized) {
     const inputCode = window.prompt("Ingrese el código de retiro del paquete:");
-    if (inputCode === null) return; // Cancelled
+    if (inputCode === null) return; 
 
-    if (inputCode === String(pkg.codigo)) { // <-- Cambiado a pkg.codigo
+    if (inputCode === String(pkg.codigo)) { 
       try {
-        await api.put(`/update_package/${id}/`, {
+        const response = await api.put(`/update_package/${id}/`, {
           withdrawn: true,
           urgent: false,
         });
@@ -53,6 +40,7 @@ const App = () => {
             pkg.id === id ? { ...pkg, withdrawn: true, urgente: false } : pkg
           )
         );
+        toast.success(response.data.message);
         authorized = true;
       } catch (error) {
         console.error("Error updating package:", error);
@@ -60,13 +48,14 @@ const App = () => {
         return;
       }
     } else {
-      alert("Código incorrecto. Intente nuevamente.");
+      toast.error("Código incorrecto. Intente nuevamente.");
     }
   }
 };
 
   return (
     <div className="container mx-auto p-2 lg:p-4">
+      <Toaster position="top-right" />
       <div className="hidden lg:grid lg:grid-cols-6 gap-33 bg-gray-100 p-3 rounded-t-lg">
         <div className="font-bold text-center">ID</div>
         <div className="font-bold text-center">Department</div>
