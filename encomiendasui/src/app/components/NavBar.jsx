@@ -1,17 +1,18 @@
 "use client";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import AuthContext from "../context/AuthContext";
 
 const NavBar = () => {
   const router = useRouter();
+  const { user, logout } = useContext(AuthContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Borra el token del localStorage
-    router.push("/login"); // Redirige al usuario a la página de inicio de sesión
+    localStorage.removeItem("token");
+    router.push("/login");
+    if (logout) logout();
   };
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -69,12 +70,21 @@ const NavBar = () => {
           >
             Historial
           </a>
-          <button
-            onClick={handleLogout}
-            className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-base border-0 cursor-pointer transition-colors text-green-500"
-          >
-            Logout
-          </button>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-base border-0 cursor-pointer transition-colors text-green-500"
+            >
+              Salir
+            </button>
+          ) : (
+            <a
+              href="/login"
+              className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
+            >
+              Iniciar sesión
+            </a>
+          )}
         </div>
       </div>
 
@@ -98,12 +108,21 @@ const NavBar = () => {
           >
             Historial
           </a>
-          <button
-            onClick={handleLogout}
-            className="bg-gray-700 hover:bg-gray-800 px -3 py-2 rounded text-sm border-0 cursor-pointer transition-colors text-left text-green-500"
-          >
-            Logout
-          </button>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-sm cursor-pointer transition-colors text-left text-green-500"
+            >
+              Salir
+            </button>
+          ) : (
+            <a
+              href="/login"
+              className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
+            >
+              Iniciar sesión
+            </a>
+          )}
         </div>
       )}
     </nav>
