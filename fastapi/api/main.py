@@ -58,47 +58,47 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
 
     # Configurar y enviar el correo
     receiver_email = user.email
-    if urgente: 
-        message = MIMEMultipart("alternative")
-        if urgente:
-            message["Subject"] = "¡Paquete urgente esperando por ti!"
-        else:
-            message["Subject"] = "Hola, hay un paquete esperando por ti!!!"
-        message["From"] = sender_email
-        message["To"] = receiver_email
-        
-        html = f"""\
-        <html>
-        <body>
-            <p>Hola {user.username},<br>
-            Te informamos que ha llegado un paquete{' <b>Urgente</b>' if urgente else ''} para el departamento {depto}.<br>
-            <b>Código de retiro:</b> {new_package.codigo}
-            </p>
-        </body>
-        </html>
-        """
-        part = MIMEText(html, "html")
-        message.attach(part)
+    # if not urgente: 
+    message = MIMEMultipart("alternative")
+    if urgente:
+        message["Subject"] = "¡Paquete urgente esperando por ti!"
+    else:
+        message["Subject"] = "Hola, hay un paquete esperando por ti!!!"
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    
+    html = f"""\
+    <html>
+    <body>
+        <p>Hola {user.username},<br>
+        Te informamos que ha llegado un paquete{' <b>Urgente</b>' if urgente else ''} para el departamento {depto}.<br>
+        <b>Código de retiro:</b> {new_package.codigo}
+        </p>
+    </body>
+    </html>
+    """
+    part = MIMEText(html, "html")
+    message.attach(part)
 
-        server = smtplib.SMTP(smtp_server, port)
-        server.set_debuglevel(1)
-        server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
-        server.login(login, password)
-        
-        server.sendmail(
-            sender_email, receiver_email, message.as_string()
-        )
-        server.quit()
+    server = smtplib.SMTP(smtp_server, port)
+    server.set_debuglevel(1)
+    server.esmtp_features['auth'] = 'LOGIN DIGEST-MD5 PLAIN'
+    server.login(login, password)
+    
+    server.sendmail(
+        sender_email, receiver_email, message.as_string()
+    )
+    server.quit()
 
-        return {
-            "message": "Package added successfully and email sent",
-            "package": {
-                "id": new_package.id,
-                "depto": new_package.depto,
-                "added_at": new_package.added_at,
-                "withdrawn": new_package.withdrawn,
-            },
-        }
+    return {
+        "message": "Package added successfully and email sent",
+        "package": {
+            "id": new_package.id,
+            "depto": new_package.depto,
+            "added_at": new_package.added_at,
+            "withdrawn": new_package.withdrawn,
+        },
+    }
     
 
 
@@ -137,7 +137,7 @@ async def update_package(package_id: int, request: Request, db: db_dependency, u
         package.urgente = body["urgente"]
     db.commit()
     db.refresh(package)
-    return {"message": "Package updated successfully", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn, "urgente": package.urgente}}
+    return {"message": "Paquete retirado Exitosamente!  ", "package": {"id": package.id, "depto": package.depto, "added_at": package.added_at, "withdrawn": package.withdrawn, "urgente": package.urgente}}
 
 @app.delete("/delete_user/{user_id}/")
 def delete_user(user_id: int, db: db_dependency, user: user_dependency):
