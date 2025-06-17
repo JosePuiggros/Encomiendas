@@ -67,13 +67,36 @@ async def add_package(request: Request, db: db_dependency, user: user_dependency
     message["From"] = sender_email
     message["To"] = receiver_email
     
+    # html = f"""\
+    # <html>
+    # <body>
+    #     <p>Hola {user.username},<br>
+    #     Te informamos que ha llegado un paquete{' <b>Urgente</b>' if urgente else ''} para el departamento {depto}.<br>
+    #     <b>Código de retiro:</b> {new_package.codigo}
+    #     </p>
+    # </body>
+    # </html>
+    # """
     html = f"""\
     <html>
-    <body>
-        <p>Hola {user.username},<br>
-        Te informamos que ha llegado un paquete{' <b>Urgente</b>' if urgente else ''} para el departamento {depto}.<br>
-        <b>Código de retiro:</b> {new_package.codigo}
+    <body style="background-color:#eaf6f6; margin:0; padding:40px 0;">
+        <div style="max-width:420px;margin:0 auto;background:#f0fbf4;border-radius:12px;box-shadow:0 2px 12px #0001;padding:32px 24px 24px 24px;font-family:sans-serif;">
+        <h2 style="color:#2176ae;text-align:center;margin-bottom:16px;">¡Tienes un paquete nuevo!</h2>
+        <p style="color:#145374;font-size:16px;margin-bottom:18px;">
+            Hola <b>{user.username}</b>,<br>
+            Te informamos que ha llegado un paquete{' <b style="color:#38b000;">URGENTE</b>' if urgente else ''} para el departamento <b>{depto}</b>.
         </p>
+        <div style="background:#d0f4ea;border-radius:8px;padding:18px 12px;margin:18px 0;text-align:center;">
+            <span style="color:#2176ae;font-size:15px;">Código de retiro:</span><br>
+            <span style="font-size:2rem;letter-spacing:2px;color:#38b000;font-weight:bold;display:inline-block;margin-top:8px;">
+            {codigo}
+            </span>
+        </div>
+        <p style="color:#2176ae;font-size:13px;text-align:center;margin-top:24px;">
+            Por favor, presenta este código para retirar tu paquete.<br>
+            ¡Gracias por usar nuestro sistema!
+        </p>
+        </div>
     </body>
     </html>
     """
