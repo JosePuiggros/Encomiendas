@@ -1,6 +1,7 @@
 "use client";
 import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AuthContext from "../context/AuthContext";
 
 const NavBar = () => {
@@ -22,12 +23,12 @@ const NavBar = () => {
     <nav className="fixed top-0 w-full shadow-md z-50 p-3 bg-gray-900">
       <div className="flex justify-between items-center">
         <div>
-          <a
+          <Link
             href="/"
             className="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded text-base no-underline transition-colors text-green-500"
           >
             Inicio
-          </a>
+          </Link>
         </div>
         <button
           className="md:hidden focus:outline-none text-green-500"
@@ -52,24 +53,24 @@ const NavBar = () => {
         </button>
 
         <div className="hidden md:flex flex-wrap justify-center gap-2">
-          <a
+          <Link
             href="/para_retirar"
             className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
           >
             Ver paquetes por retirar
-          </a>
-          <a
+          </Link>
+          <Link
             href="/add_package"
             className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
           >
             Agregar un paquete
-          </a>
-          <a
+          </Link>
+          <Link
             href="/historial"
             className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
           >
             Historial
-          </a>
+          </Link>
           {user ? (
             <button
               onClick={handleLogout}
@@ -78,36 +79,36 @@ const NavBar = () => {
               Salir
             </button>
           ) : (
-            <a
+            <Link
               href="/login"
               className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-base no-underline transition-colors text-green-500"
             >
               Iniciar sesión
-            </a>
+            </Link>
           )}
         </div>
       </div>
 
       {isMenuOpen && (
         <div className="md:hidden flex flex-col mt-4 gap-2">
-          <a
+          <Link
             href="/para_retirar"
             className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
           >
             Ver paquetes por retirar
-          </a>
-          <a
+          </Link>
+          <Link
             href="/add_package"
             className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
           >
             Agregar un paquete
-          </a>
-          <a
+          </Link>
+          <Link
             href="/historial"
             className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
           >
             Historial
-          </a>
+          </Link>
           {user ? (
             <button
               onClick={handleLogout}
@@ -116,12 +117,12 @@ const NavBar = () => {
               Salir
             </button>
           ) : (
-            <a
+            <Link
               href="/login"
               className="bg-gray-700 hover:bg-gray-800 px-3 py-2 rounded text-sm no-underline transition-colors text-green-500"
             >
               Iniciar sesión
-            </a>
+            </Link>
           )}
         </div>
       )}
