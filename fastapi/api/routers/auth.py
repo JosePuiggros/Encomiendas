@@ -11,7 +11,6 @@ from api.deps import db_dependency, bcrypt_context
 
 load_dotenv()
 
-
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
@@ -55,7 +54,7 @@ async def create_user(db: db_dependency, create_user_request: UserCreateRequest)
     db.add(create_use_model)
     db.commit()
 
-@router.post("/token", response_model=Token)
+@router.post("/token/", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                   db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)

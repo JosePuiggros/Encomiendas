@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000", // Cambia esto si tu backend tiene otra URL
+  baseURL:
+    "https://encomiendasapi-fehjgmfbgpguc7dm.canadacentral-01.azurewebsites.net", // Cambia esto si tu backend tiene otra URL
 });
 
 api.interceptors.request.use((config) => {

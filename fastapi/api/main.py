@@ -15,8 +15,7 @@ app = FastAPI()
 scheduler = BackgroundScheduler()
 
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "https://encomiendas-ewhng8b9exh9cbat.chilecentral-01.azurewebsites.net",
     ]
 
 app.add_middleware(

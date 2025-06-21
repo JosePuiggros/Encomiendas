@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import api from "../api";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -18,15 +19,11 @@ export default function Register() {
     e.preventDefault();
     setMessage("");
     try {
-      const res = await fetch("http://localhost:8000/auth/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: form.username,
-          password: form.password,
-          email: form.email,
-          depto: parseInt(form.depto, 10),
-        }),
+      const res = await api.post("/auth/", {
+        username: form.username,
+        password: form.password,
+        email: form.email,
+        depto: parseInt(form.depto, 10),
       });
       if (res.ok) {
         setMessage("Usuario creado exitosamente.");

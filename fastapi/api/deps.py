@@ -9,6 +9,7 @@ from .database import SessionLocal
 from dotenv import load_dotenv
 
 load_dotenv()
+
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
 ALGOTITHM = os.getenv("AUTH_ALGORITHM")
 
